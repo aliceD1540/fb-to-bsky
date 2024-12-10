@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repost to Bluesky</title>
+</head>
+<body>
+    <form action="/submit" method="post">
+        <textarea id="message" name="message"></textarea>
+        <input type="submit" value="Submit">
+    </form>
+    {{ images | safe }}
+</body>
