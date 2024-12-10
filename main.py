@@ -1,9 +1,11 @@
 import requests
 import json
 import os
+import re
 from dotenv import load_dotenv
 from flask import Flask, request, redirect, render_template, session
 from bsky_util import BlueskyUtil
+from atproto import client_utils
 
 load_dotenv(".env")
 
@@ -24,6 +26,16 @@ def get_image_bytes(img_url: str) -> bytes:
     resp = requests.get(img_url)
     resp.raise_for_status()
     return resp.content
+
+
+def message_to_textbuilder(message: str) -> client_utils.TextBuilder:
+    hashtags = re.findall(r"#\w+", message)
+    clean_message = re.sub(r"#\w+", "", message).strip()
+
+    text_builder = client_utils.TextBuilder().text(clean_message)
+    for hashtag in hashtags:
+        text_builder.text(" ").tag(hashtag, hashtag.lstrip("#"))
+    return text_builder
 
 
 # ログインURLの生成
@@ -93,7 +105,7 @@ def submit():
     for image_url in session.get("image_urls", []):
         images.append(get_image_bytes(image_url))
     bsky_util.load_session()
-    bsky_util.post_image(request.form["message"], images=images)
+    bsky_util.post_image(message_to_textbuilder(request.form["message"]), images=images)
     return "post finished."
 
 

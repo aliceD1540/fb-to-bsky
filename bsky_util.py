@@ -1,5 +1,5 @@
 import os
-from atproto import Client, models, exceptions
+from atproto import Client, models, exceptions, client_utils
 from atproto_client.namespaces.sync_ns import ChatBskyConvoNamespace
 
 # セッション保持ファイル
@@ -57,6 +57,6 @@ class BlueskyUtil:
         """テキストのみのポスト"""
         self.client.post(text)
 
-    def post_image(self, text: str, images: list):
+    def post_image(self, text: str | client_utils.TextBuilder, images: list):
         """画像付きポスト"""
         self.client.send_images(text=text, images=images)
