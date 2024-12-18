@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Repost to Bluesky</title>
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
     <form action="/submit" method="post">
-        <textarea id="message" name="message"></textarea>
+        <textarea id="message" name="message" class="message">{{ message }}</textarea>
+        <input type="button" value="Reload" onclick="location.href='..'">
         <input type="submit" value="Submit">
     </form>
     {{ images | safe }}
