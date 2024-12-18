@@ -1,10 +1,8 @@
 import requests
 import os
-import re
 from dotenv import load_dotenv
 from flask import Flask, request, redirect, render_template, session
 from utils.bsky_util import BlueskyUtil
-from atproto import client_utils
 
 load_dotenv(".env")
 
@@ -18,24 +16,6 @@ bsky_util = BlueskyUtil()
 
 # ローカルネットワーク内で動かす想定なのでシークレットキーは直書き
 app.secret_key = "local_secret_key"
-
-
-def get_image_bytes(img_url: str) -> bytes:
-    """画像URLから画像データを取得"""
-    resp = requests.get(img_url)
-    resp.raise_for_status()
-    return resp.content
-
-
-def message_to_textbuilder(message: str) -> client_utils.TextBuilder:
-    """テキストに含まれるタグ情報を分離、タグとして設定する"""
-    hashtags = re.findall(r"#\w+", message)
-    clean_message = re.sub(r"#\w+", "", message).strip()
-
-    text_builder = client_utils.TextBuilder().text(clean_message)
-    for hashtag in hashtags:
-        text_builder.text(" ").tag(hashtag, hashtag.lstrip("#"))
-    return text_builder
 
 
 def get_post_images(access_token: str) -> str:
@@ -125,14 +105,12 @@ def callback():
 # Blueskyに投稿
 @app.route("/submit", methods=["POST"])
 def submit():
-    images = []
-    for image_url in session.get("image_urls", []):
-        images.append(get_image_bytes(image_url))
-
     session["message"] = request.form["message"]
 
     bsky_util.load_session()
-    bsky_util.post_image(message_to_textbuilder(request.form["message"]), images=images)
+    bsky_util.post_images(
+        message=request.form["message"], image_urls=session.get("image_urls", [])
+    )
     return render_template("result.html", result="success.", home_url="..")
 
 
