@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+img.screenshot {
+    width: 100px;
+    margin: 5px;
+}
+
+textarea.message {
+    width: 300px;
+    height: 100px;
+}
