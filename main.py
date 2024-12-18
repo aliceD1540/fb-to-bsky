@@ -3,7 +3,7 @@ import os
 import re
 from dotenv import load_dotenv
 from flask import Flask, request, redirect, render_template, session
-from bsky_util import BlueskyUtil
+from utils.bsky_util import BlueskyUtil
 from atproto import client_utils
 
 load_dotenv(".env")
