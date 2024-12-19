@@ -110,7 +110,7 @@ def form():
 
         # トークンを使って画像取得＆
         images_tag = get_post_images(access_token)
-        message = session.get("message", "") + os.getenv("MESSAGE_FOOTER", "")
+        message = session.get("message", "")
         return render_template("form.html", images=images_tag, message=message)
     except:
         return redirect(
@@ -141,7 +141,8 @@ def submit():
 
     bsky_util.load_guest_session(session.get("bsky_session"))
     bsky_util.post_images(
-        message=request.form["message"], image_urls=session.get("image_urls", [])
+        message=request.form["message"] + os.getenv("MESSAGE_FOOTER", ""),
+        image_urls=session.get("image_urls", []),
     )
     return render_template("result.html", result="success.", home_url="..")
 
