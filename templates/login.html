@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repost to Bluesky</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    Login
+    <form action="/login" method="post">
+        Bluesky User Name : <input type="text" name="bsky_user"><br/>
+        Bluesky App Password : <input type="password" name="bsky_pass"><br/>
+        Remember Login : <input type="checkbox" name="remember_auth"><br/>
+        <input type="submit" value="Submit">
+    </form>
+    {{ message }}
+    <p>
+        ※ログイン情報はサーバには保持しません。<br/>
+    </p>
+</body>

@@ -14,8 +14,7 @@ REDIRECT_URI = os.getenv("FACEBOOK_REDIRECT_URI")
 app = Flask(__name__)
 bsky_util = BlueskyUtil()
 
-# ローカルネットワーク内で動かす想定なのでシークレットキーは直書き
-app.secret_key = "local_secret_key"
+app.secret_key = os.getenv("APP_SECRET_KEY")
 
 
 def get_post_images(access_token: str) -> str:
@@ -68,7 +67,46 @@ def make_session_permanent():
 
 # ログインURLの生成
 @app.route("/")
+def route():
+    try:
+        bsky_user = session.get("bsky_user")
+        bsky_pass = session.get("bsky_pass")
+        # ログイン情報がセッションに残っていたら自動ログイン
+        # print(bsky_user, bsky_pass)
+        bsky_util.create_guest_session(bsky_user=bsky_user, bsky_pass=bsky_pass)
+        session["bsky_session"] = bsky_util.get_session_str()
+        # セッション作成に成功したらloginを飛ばしてformにリダイレクト
+        return redirect("/form")
+    except:
+        import traceback
+
+        traceback.print_exc()
+        # ログイン情報がセッションに残っていなかったり無効だったらログインフォームを表示
+        return render_template("login.html")
+
+
+@app.route("/login", methods=["POST"])
 def login():
+    try:
+        bsky_user = request.form["bsky_user"]
+        bsky_pass = request.form["bsky_pass"]
+        # チェックボックスの値を取得
+        remember = request.form.get("remember_auth")
+        bsky_util.create_guest_session(bsky_user=bsky_user, bsky_pass=bsky_pass)
+        session["bsky_session"] = bsky_util.get_session_str()
+        if remember:
+            session["bsky_user"] = bsky_user
+            session["bsky_pass"] = bsky_pass
+        return redirect("/form")
+    except Exception as e:
+        import traceback
+
+        traceback.print_exc()
+        return render_template("login.html", message="Failed to login.")
+
+
+@app.route("/form")
+def form():
     try:
         # 前回分のアクセストークンの取得を試行し、それが有効だったらそのまま画像取得＆フォーム表示
         access_token = session.get("access_token")
@@ -107,7 +145,7 @@ def callback():
 def submit():
     session["message"] = request.form["message"]
 
-    bsky_util.load_session()
+    bsky_util.load_guest_session(session.get("bsky_session"))
     bsky_util.post_images(
         message=request.form["message"], image_urls=session.get("image_urls", [])
     )
