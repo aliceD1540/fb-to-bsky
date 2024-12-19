@@ -72,15 +72,11 @@ def route():
         bsky_user = session.get("bsky_user")
         bsky_pass = session.get("bsky_pass")
         # ログイン情報がセッションに残っていたら自動ログイン
-        # print(bsky_user, bsky_pass)
         bsky_util.create_guest_session(bsky_user=bsky_user, bsky_pass=bsky_pass)
         session["bsky_session"] = bsky_util.get_session_str()
         # セッション作成に成功したらloginを飛ばしてformにリダイレクト
         return redirect("/form")
     except:
-        import traceback
-
-        traceback.print_exc()
         # ログイン情報がセッションに残っていなかったり無効だったらログインフォームを表示
         return render_template("login.html")
 
@@ -99,9 +95,7 @@ def login():
             session["bsky_pass"] = bsky_pass
         return redirect("/form")
     except Exception as e:
-        import traceback
-
-        traceback.print_exc()
+        # ログイン情報がセッションに残っていなかったり無効だったらログインフォームを表示
         return render_template("login.html", message="Failed to login.")
 
 
@@ -116,7 +110,7 @@ def form():
 
         # トークンを使って画像取得＆
         images_tag = get_post_images(access_token)
-        message = session.get("message", "")
+        message = session.get("message", "") + os.getenv("MESSAGE_FOOTER", "")
         return render_template("form.html", images=images_tag, message=message)
     except:
         return redirect(
