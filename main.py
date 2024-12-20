@@ -141,7 +141,7 @@ def submit():
 
     bsky_util.load_guest_session(session.get("bsky_session"))
     bsky_util.post_images(
-        message=request.form["message"] + os.getenv("MESSAGE_FOOTER", ""),
+        message=request.form["message"],
         image_urls=session.get("image_urls", []),
     )
     return render_template("result.html", result="success.", home_url="..")
