@@ -14,8 +14,17 @@
 <h1>Project Grimoire</h1>
 </header>
 <div class="row"><div class="col">
-    {{ result }}<br/>
-    <input type="button" value="Reload" onclick="location.href='..'">
+    Login
+    <form action="/login" method="post">
+        Bluesky User Name : <input type="text" name="bsky_user"><br/>
+        Bluesky App Password : <input type="password" name="bsky_pass"><br/>
+        Remember Login : <input type="checkbox" name="remember_auth"><br/>
+        <input type="submit" value="Submit">
+    </form>
+    {{ message }}
+    <p>
+        ※ログイン情報はサーバには保持しません。<br/>
+    </p>
     <p><a href="https://project-grimoire.dev/repost-to-bsky/" target="_blank">about this.</a></p>
 </div></div></section></main>
 <footer>

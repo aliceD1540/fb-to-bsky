@@ -1,10 +1,8 @@
 import requests
 import os
-import re
 from dotenv import load_dotenv
 from flask import Flask, request, redirect, render_template, session
-from bsky_util import BlueskyUtil
-from atproto import client_utils
+from utils.bsky_util import BlueskyUtil
 
 load_dotenv(".env")
 
@@ -16,26 +14,7 @@ REDIRECT_URI = os.getenv("FACEBOOK_REDIRECT_URI")
 app = Flask(__name__)
 bsky_util = BlueskyUtil()
 
-# ローカルネットワーク内で動かす想定なのでシークレットキーは直書き
-app.secret_key = "local_secret_key"
-
-
-def get_image_bytes(img_url: str) -> bytes:
-    """画像URLから画像データを取得"""
-    resp = requests.get(img_url)
-    resp.raise_for_status()
-    return resp.content
-
-
-def message_to_textbuilder(message: str) -> client_utils.TextBuilder:
-    """テキストに含まれるタグ情報を分離、タグとして設定する"""
-    hashtags = re.findall(r"#\w+", message)
-    clean_message = re.sub(r"#\w+", "", message).strip()
-
-    text_builder = client_utils.TextBuilder().text(clean_message)
-    for hashtag in hashtags:
-        text_builder.text(" ").tag(hashtag, hashtag.lstrip("#"))
-    return text_builder
+app.secret_key = os.getenv("APP_SECRET_KEY")
 
 
 def get_post_images(access_token: str) -> str:
@@ -88,7 +67,40 @@ def make_session_permanent():
 
 # ログインURLの生成
 @app.route("/")
+def route():
+    try:
+        bsky_user = session.get("bsky_user")
+        bsky_pass = session.get("bsky_pass")
+        # ログイン情報がセッションに残っていたら自動ログイン
+        bsky_util.create_guest_session(bsky_user=bsky_user, bsky_pass=bsky_pass)
+        session["bsky_session"] = bsky_util.get_session_str()
+        # セッション作成に成功したらloginを飛ばしてformにリダイレクト
+        return redirect("/form")
+    except:
+        # ログイン情報がセッションに残っていなかったり無効だったらログインフォームを表示
+        return render_template("login.html")
+
+
+@app.route("/login", methods=["POST"])
 def login():
+    try:
+        bsky_user = request.form["bsky_user"]
+        bsky_pass = request.form["bsky_pass"]
+        # チェックボックスの値を取得
+        remember = request.form.get("remember_auth")
+        bsky_util.create_guest_session(bsky_user=bsky_user, bsky_pass=bsky_pass)
+        session["bsky_session"] = bsky_util.get_session_str()
+        if remember:
+            session["bsky_user"] = bsky_user
+            session["bsky_pass"] = bsky_pass
+        return redirect("/form")
+    except Exception as e:
+        # ログイン情報がセッションに残っていなかったり無効だったらログインフォームを表示
+        return render_template("login.html", message="Failed to login.")
+
+
+@app.route("/form")
+def form():
     try:
         # 前回分のアクセストークンの取得を試行し、それが有効だったらそのまま画像取得＆フォーム表示
         access_token = session.get("access_token")
@@ -125,14 +137,13 @@ def callback():
 # Blueskyに投稿
 @app.route("/submit", methods=["POST"])
 def submit():
-    images = []
-    for image_url in session.get("image_urls", []):
-        images.append(get_image_bytes(image_url))
-
     session["message"] = request.form["message"]
 
-    bsky_util.load_session()
-    bsky_util.post_image(message_to_textbuilder(request.form["message"]), images=images)
+    bsky_util.load_guest_session(session.get("bsky_session"))
+    bsky_util.post_images(
+        message=request.form["message"] + os.getenv("MESSAGE_FOOTER", ""),
+        image_urls=session.get("image_urls", []),
+    )
     return render_template("result.html", result="success.", home_url="..")
 
 
