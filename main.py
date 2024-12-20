@@ -111,7 +111,12 @@ def form():
         # トークンを使って画像取得＆
         images_tag = get_post_images(access_token)
         message = session.get("message", "")
-        return render_template("form.html", images=images_tag, message=message)
+        return render_template(
+            "form.html",
+            images=images_tag,
+            message=message,
+            post_to=session.get("bsky_user"),
+        )
     except:
         return redirect(
             f"https://www.facebook.com/v21.0/dialog/oauth?client_id={APP_ID}&redirect_uri={REDIRECT_URI}&state=your_state_value&scope=public_profile%2Copenid"
