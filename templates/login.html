@@ -1,36 +1,43 @@
 <!DOCTYPE html>
 <html lang="jp">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Repost to Bluesky</title>
-    <link rel="stylesheet" href="https://project-grimoire.dev/css/style.css">
-    <link rel="stylesheet" href="static/css/style.css">
-</head>
-<body>
-<main>
-<section>
-<header>
-<h1>Project Grimoire</h1>
-</header>
-<div class="row"><div class="col">
-    Login
-    <form action="/login" method="post">
-        Bluesky User Name : <input type="text" name="bsky_user"><br/>
-        Bluesky App Password : <input type="password" name="bsky_pass"><br/>
-        Remember Login : <input type="checkbox" name="remember_auth"><br/>
-        <input type="submit" value="Submit">
-    </form>
-    {{ message }}
-    <p>
-        ※ログイン情報はサーバには保持しません。<br/>
-    </p>
-    <p><a href="https://project-grimoire.dev/repost-to-bsky/" target="_blank">about this.</a></p>
-</div></div></section></main>
-<footer>
-<p class="bottom">
-<a href="https://do.gt-gt.org" target="_blank">template by do.</a>
-</p>
-</footer>
-</body>
+    <link rel="stylesheet" href="https://project-grimoire.dev/css/style.css" />
+    <link rel="stylesheet" href="static/css/style.css" />
+  </head>
+  <body>
+    <main>
+      <section>
+        <header>
+          <h1>Project Grimoire</h1>
+        </header>
+        <div class="row">
+          <div class="col">
+            <h2>Facebookの最新投稿の画像を取得してBlueskyにポストするやつ</h2>
+            Login
+            <form action="/login" method="post">
+              Bluesky User Name : <input type="text" name="bsky_user" /><br />
+              Bluesky App Password :
+              <input type="password" name="bsky_pass" /><br />
+              Remember Login :
+              <input type="checkbox" name="remember_auth" /><br />
+              <input type="submit" value="Submit" />
+            </form>
+            {{ message }}
+            <p>※ログイン情報はサーバには保持しません。<br /></p>
+            <p>
+              <a href="https://project-grimoire.dev/repost-to-bsky/" target="_blank">about this.</a>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <p class="bottom">
+        <a href="https://do.gt-gt.org" target="_blank">template by do.</a>
+      </p>
+    </footer>
+  </body>
 </html>
