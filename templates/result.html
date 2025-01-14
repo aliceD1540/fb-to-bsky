@@ -4,8 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Repost to Bluesky</title>
+    <link rel="icon" href="https://r2.project-grimoire.dev/site/img/favicon.ico" />
     <link rel="stylesheet" href="https://project-grimoire.dev/css/style.css" />
     <link rel="stylesheet" href="static/css/style.css" />
+    <!-- 5秒後にリロードしてformに移動 -->
+    <script>
+      setTimeout(function () {
+        location.href = './form';
+      }, 5000);
+    </script>
   </head>
   <body>
     <main>
@@ -18,6 +25,7 @@
             <h2>Facebookの最新投稿の画像を取得してBlueskyにポストするやつ</h2>
             {{ result }}<br />
             <input type="button" value="Reload" onclick="location.href='..'" />
+            5秒後に投稿画面に戻ります。
             <p>
               <a href="https://project-grimoire.dev/repost-to-bsky/" target="_blank">about this.</a>
             </p>
