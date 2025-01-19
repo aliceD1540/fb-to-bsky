@@ -152,5 +152,12 @@ def submit():
     return render_template("result.html", result="success.", home_url="..")
 
 
+# ログアウト
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
