@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request, redirect, render_template, session
 from utils.bsky_util import BlueskyUtil
+import atproto_client.exceptions
 
 load_dotenv(".env")
 
@@ -152,11 +153,24 @@ def submit():
             bsky_user=session.get("bsky_user"), bsky_pass=session.get("bsky_pass")
         )
         session["bsky_session"] = bsky_util.get_session_str()
-    bsky_util.post_images(
-        message=request.form["message"],
-        image_urls=session.get("image_urls", []),
-    )
-    return render_template("result.html", result="success.", home_url="..")
+    try:
+        bsky_util.post_images(
+            message=request.form["message"],
+            image_urls=session.get("image_urls", []),
+        )
+    except atproto_client.exceptions.BadRequestError as e:
+        if e.error == "ExpiredToken":
+            # トークンが期限切れの場合、再ログインしてセッション情報更新
+            bsky_util.create_guest_session(
+                bsky_user=session.get("bsky_user"), bsky_pass=session.get("bsky_pass")
+            )
+            session["bsky_session"] = bsky_util.get_session_str()
+            bsky_util.post_images(
+                message=request.form["message"],
+                image_urls=session.get("image_urls", []),
+            )
+        else:
+            raise e
 
 
 # ログアウト
