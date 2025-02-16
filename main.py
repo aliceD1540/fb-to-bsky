@@ -146,12 +146,11 @@ def submit():
 
     try:
         bsky_util.load_guest_session(session.get("bsky_session"))
-    except:
-        # セッションが無効だったら再ログインしてセッション情報更新
-        bsky_util.create_guest_session(
-            bsky_user=session.get("bsky_user"), bsky_pass=session.get("bsky_pass")
-        )
         session["bsky_session"] = bsky_util.get_session_str()
+    except:
+        # ログイン失敗したらログイン画面にリダイレクト
+        return redirect("/")
+
     bsky_util.post_images(
         message=request.form["message"],
         image_urls=session.get("image_urls", []),
