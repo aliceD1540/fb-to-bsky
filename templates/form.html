@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Repost to Bluesky</title>
+    <link rel="icon" href="https://r2.project-grimoire.dev/site/img/favicon.ico" />
     <link rel="stylesheet" href="https://project-grimoire.dev/css/style.css" />
     <link rel="stylesheet" href="static/css/style.css" />
   </head>
@@ -23,9 +24,15 @@
               <input type="submit" value="Submit" />
             </form>
             {{ images | safe }}
-            <p>メッセージに含まれるタグおよびURLは自動的に最後部に移動します。</p>
+            <p>
+              メッセージに含まれるタグおよびURLは自動的に最後部に移動します。<br />
+              本サービスへのリンクが末尾に付加されます。
+            </p>
             <p>
               <a href="https://project-grimoire.dev/repost-to-bsky/" target="_blank">about this.</a>
+            </p>
+            <p>
+              <a href="/logout">logout</a>
             </p>
           </div>
         </div>
