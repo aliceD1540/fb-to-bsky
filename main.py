@@ -108,7 +108,7 @@ def form():
         params = {"access_token": access_token, "fields": "id,created_time"}
         requests.get(graph_api_url, params=params)
 
-        # トークンを使って画像取得＆
+        # トークンを使って画像取得＆前回投稿内容を設定してフォーム表示
         images_tag = get_post_images(access_token)
         message = session.get("message", "")
         return render_template(
@@ -144,12 +144,25 @@ def callback():
 def submit():
     session["message"] = request.form["message"]
 
-    bsky_util.load_guest_session(session.get("bsky_session"))
+    try:
+        bsky_util.load_guest_session(session.get("bsky_session"))
+        session["bsky_session"] = bsky_util.get_session_str()
+    except:
+        # ログイン失敗したらログイン画面にリダイレクト
+        return redirect("/")
+
     bsky_util.post_images(
         message=request.form["message"],
         image_urls=session.get("image_urls", []),
     )
     return render_template("result.html", result="success.", home_url="..")
+
+
+# ログアウト
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
 
 
 if __name__ == "__main__":
