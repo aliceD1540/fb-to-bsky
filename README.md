@@ -1,3 +1,8 @@
+# ⚠️ Deprecated / Archived Repository
+
+Facebook投稿に対応しなくなった新機種移行に伴い、本リポジトリを使ったWebサービスは現在は運用していません。
+旧機種のアップデートやFacebook側の仕様変更により使用できなくなる可能性があるためアーカイブします。
+
 ## なにこれ
 
 Facebookの最新投稿の画像を取得してBlueskyにポスト、 
